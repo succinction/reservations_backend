@@ -1,0 +1,6 @@
+{
+    "env": {
+        "NODE_ENV": "development",
+        "BASE_URL": "localhost:3000"
+    }
+}
