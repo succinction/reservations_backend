@@ -1,6 +1,3 @@
-// Using GraphQL, create an Express app that simulates a basic reservations system.
-// usage: npm run start
-//
 const bookingData = require("./lib/bookingData");
 const graphqlHttp = require("express-graphql");
 const { buildSchema } = require("graphql");
@@ -11,7 +8,6 @@ const app = express();
 
 app.use(bodyParser.json());
 
-// Add headers for CORS
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST,GET");
@@ -22,10 +18,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// simulate a database
 const bookingsDB = bookingData.arrayOfObjects;
 
-// graphql implementation
 app.use(
   "/graphql",
   graphqlHttp({
@@ -71,21 +65,30 @@ app.use(
         const index = bookingsDB.findIndex(record => {
           return record._id === idInput.id;
         });
+        if (index === -1) {
+          return {
+            _id: `${idInput.id} Not Found`,
+            name: "Not Found",
+            hotel: "",
+            arrivalDate: "",
+            departureDate: ""
+          };
+        }
         return bookingsDB[index];
       },
       createBooking: ({ bookingInput }) => {
         const booking = {
           _id: bookingsDB.length + 1,
-          name: bookingInput.name,
-          hotel: bookingInput.hotel,
-          arrivalDate: bookingInput.arrivalDate,
-          departureDate: bookingInput.departureDate
+          name: bookingInput.name || "[name]",
+          hotel: bookingInput.hotel || "[hotel]",
+          arrivalDate: bookingInput.arrivalDate || "[date arrive]",
+          departureDate: bookingInput.departureDate || "[date depart]"
         };
         bookingsDB.push(booking);
         return booking;
       }
     },
-    graphiql: process.env.NODE_ENV === "development"
+    graphiql: true
   })
 );
 
@@ -93,7 +96,6 @@ app.get("/", function(req, res) {
   res.send("<h1>Home<h1>");
 });
 
-// REST implementations
 app.get("/reservations", (req, res) => {
   res.send(bookingsDB);
 });
@@ -117,4 +119,7 @@ app.post("/reservation", (req, res) => {
   res.send(booking);
 });
 
-app.listen(5000);
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`server listening on port ${PORT}`);
+});

@@ -4,7 +4,8 @@
   "description": "A Hotel Reservation App",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "watch": "nodemon app.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
